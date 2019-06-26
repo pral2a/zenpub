@@ -68,7 +68,7 @@ defmodule ActivityPubWeb.ActivityPubView do
     entity
     |> Entity.extension_fields()
     |> Enum.filter(&filter_by_value/1)
-    |> Enum.map(&map_value/1)
+    # |> Enum.map(&map_value/1)
   end
 
   # FIXME this can be calculated in compilation time :)
