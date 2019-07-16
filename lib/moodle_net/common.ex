@@ -12,7 +12,7 @@ defmodule MoodleNet.Common do
 
   def flag(model, policy, actor, thing, attrs) do
     attrs = flag_attrs(actor, thing, attrs)
-    with :ok <- apply(Policy, policy, [actor, thing, attrs]),
+    with {:ok, attrs} <- apply(Policy, policy, [actor, thing, attrs]),
       do: Repo.insert(apply(model, :changeset, [attrs]))
   end
 

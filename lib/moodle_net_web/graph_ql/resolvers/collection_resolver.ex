@@ -72,10 +72,14 @@ defmodule MoodleNetWeb.GraphQL.CollectionResolver do
     |> Errors.handle_error()
   end
 
+  require Logger
+  
   def flag(%{local_id: collection_id, reason: reason}, info) do
     with {:ok, actor} <- current_actor(info),
          {:ok, collection} <- fetch(collection_id, "MoodleNet:Collection"),
-         {:ok, _activity} <- Collections.flag(actor, collection, %{reason: reason}) do
+	 communities = preload_assoc({:context,[:local_id]}, [collection]),
+         [community] = Map.values(communities),
+         {:ok, _activity} <- Collections.flag(actor, collection, %{reason: reason, community_object_id: community.local_id}) do
       {:ok, true}
     end
     |> Errors.handle_error()

@@ -13,10 +13,11 @@ defmodule MoodleNet.Resources.ResourceFlag do
     belongs_to :flagging_object, Object
     field :reason, :string
     field :open, :boolean, default: true
+    belongs_to :community_object, Object
   end
 
-  @cast_attrs [:flagged_object_id, :flagging_object_id, :reason, :open]
-  @required_attrs [:flagged_object_id, :flagging_object_id, :reason]
+  @cast_attrs [:flagged_object_id, :flagging_object_id, :community_object_id, :reason, :open]
+  @required_attrs [:flagged_object_id, :flagging_object_id, :community_object_id, :reason]
 
   @unique_index :mn_resource_flags_once_index
 
