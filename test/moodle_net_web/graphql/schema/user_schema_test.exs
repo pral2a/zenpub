@@ -271,6 +271,7 @@ defmodule MoodleNetWeb.GraphQL.UserSchemaTest do
         icon
         image
         primaryLanguage
+        likedCollections { edges { node { id localId } } }
       }
     }
     """

@@ -111,5 +111,18 @@ defmodule MoodleNetWeb.GraphQL.UserResolver do
     |> preload_aspect_cond([:actor_aspect], fields)
     |> prepare_common_fields()
   end
+
+  def liked_collections(auth, info) do
+    Query.new()
+    |> Query.with_type("Person")
+    |> Query.has(:following, community)
+    
+  end
+
+  def liked_query(user, opts \\ %{}) do
+    Query.new()
+    |> Query.with_type("Like")
+    |> Query.belongs_to(:liked, user)
+  end
   
 end

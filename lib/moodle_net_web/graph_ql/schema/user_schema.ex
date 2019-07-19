@@ -110,6 +110,34 @@ defmodule MoodleNetWeb.GraphQL.UserSchema do
     field(:image, :string)
     field(:primary_language, :string)
 
+    field :liked_communities, :user_liked_community_connection do
+      arg(:limit, :integer)
+      arg(:before, :integer)
+      arg(:after, :integer)
+      resolve(&UserResolver.liked_communities/2)
+    end
+
+    field :liked_comments, :user_liked_comment_connection do
+      arg(:limit, :integer)
+      arg(:before, :integer)
+      arg(:after, :integer)
+      resolve(&UserResolver.liked_comments/2)
+    end
+
+    field :liked_resources, :user_liked_resource_connection do
+      arg(:limit, :integer)
+      arg(:before, :integer)
+      arg(:after, :integer)
+      resolve(&UserResolver.liked_resources/2)
+    end
+
+    field :liked_collections, :user_liked_collection_connection do
+      arg(:limit, :integer)
+      arg(:before, :integer)
+      arg(:after, :integer)
+      resolve(&UserResolver.liked_collections/2)
+    end
+
     field :joined_communities, :user_joined_communities_connection do
       arg(:limit, :integer)
       arg(:before, :integer)
@@ -144,6 +172,50 @@ defmodule MoodleNetWeb.GraphQL.UserSchema do
       arg(:after, :integer)
       resolve(with_connection(:user_outbox))
     end
+  end
+
+  object :user_liked_community_connection do
+    field(:page_info, non_null(:page_info))
+    field(:edges, list_of(:user_liked_community_edge))
+    field(:total_count, non_null(:integer))
+  end
+
+  object :user_liked_community_edge do
+    field(:cursor, non_null(:integer))
+    field(:node, :community)
+  end
+
+  object :user_liked_collection_connection do
+    field(:page_info, non_null(:page_info))
+    field(:edges, list_of(:user_liked_collection_edge))
+    field(:total_count, non_null(:integer))
+  end
+
+  object :user_liked_collection_edge do
+    field(:cursor, non_null(:integer))
+    field(:node, :collection)
+  end
+
+  object :user_liked_comment_connection do
+    field(:page_info, non_null(:page_info))
+    field(:edges, list_of(:user_liked_comment_edge))
+    field(:total_count, non_null(:integer))
+  end
+
+  object :user_liked_comment_edge do
+    field(:cursor, non_null(:integer))
+    field(:node, :comment)
+  end
+
+  object :user_liked_resource_connection do
+    field(:page_info, non_null(:page_info))
+    field(:edges, list_of(:user_liked_resource_edge))
+    field(:total_count, non_null(:integer))
+  end
+
+  object :user_liked_resource_edge do
+    field(:cursor, non_null(:integer))
+    field(:node, :resource)
   end
 
   object :user_joined_communities_connection do
