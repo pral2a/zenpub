@@ -217,7 +217,7 @@ defmodule ActivityPub.ActivityPubControllerTest do
     assert resp["@context"] == @context
     assert resp["actor"] == actor.id
     assert resp["id"]
-    assert resp["object"] == comment.id
+    assert resp["object"]["id"] == comment.id
     assert equal_list(resp["to"], [@public, actor.followers.id, community.id, community.followers.id])
     assert resp["type"] == "Create"
 
@@ -248,7 +248,7 @@ defmodule ActivityPub.ActivityPubControllerTest do
     assert resp["@context"] == @context
     assert resp["actor"] == other_actor.id
     assert resp["id"]
-    assert resp["object"] == reply.id
+    assert resp["object"]["id"] == reply.id
     assert equal_list(resp["to"], [@public, other_actor.followers.id, community.id, community.followers.id, actor.id])
     assert resp["type"] == "Create"
 
@@ -278,7 +278,7 @@ defmodule ActivityPub.ActivityPubControllerTest do
     assert resp["@context"] == @context
     assert resp["actor"] == actor.id
     assert resp["id"]
-    assert resp["object"] == col_comment.id
+    assert resp["object"]["id"] == col_comment.id
     assert equal_list(resp["to"], [@public, actor.followers.id, collection.id, collection.followers.id])
     assert resp["type"] == "Create"
 
@@ -307,7 +307,7 @@ defmodule ActivityPub.ActivityPubControllerTest do
     assert resp["@context"] == @context
     assert resp["actor"] == other_actor.id
     assert resp["id"]
-    assert resp["object"] == col_reply.id
+    assert resp["object"]["id"] == col_reply.id
     assert equal_list(resp["to"], [@public, other_actor.followers.id, collection.id, collection.followers.id, actor.id])
     assert resp["type"] == "Create"
 
@@ -366,7 +366,7 @@ defmodule ActivityPub.ActivityPubControllerTest do
     assert resp["@context"] == @context
     assert resp["id"]
     assert resp["actor"] == actor.id
-    assert resp["object"] == reply.id
+    assert resp["object"]["id"] == reply.id
     assert resp["type"] == "Like"
     assert equal_list(resp["to"], [@public, actor.followers.id, community.id, community.followers.id, other_actor.id])
 
