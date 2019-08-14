@@ -104,7 +104,6 @@ defmodule MoodleNetWeb.Router do
 
   pipeline :activity_pub do
     plug(:accepts, ["activity+json", "json"])
-    plug(ActivityPubWeb.Plugs.HTTPSignaturePlug)
   end
 
   scope "/", ActivityPubWeb do
