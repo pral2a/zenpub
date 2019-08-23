@@ -83,3 +83,7 @@ import_config "#{Mix.env()}.exs"
 config :sentry,
   enable_source_code_context: true,
   root_source_code_path: File.cwd!
+
+  config :pleroma_job_queue, :queues,
+  federator_incoming: 50,
+  federator_outgoing: 50
