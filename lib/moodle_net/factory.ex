@@ -185,4 +185,8 @@ defmodule MoodleNet.Factory do
     {:ok, c} = MoodleNet.create_reply(author, in_reply_to, attrs)
     c
   end
+
+  def instance(since \\ nil) do
+    ActivityPub.Instances.set_unreachable("domain.com", since)
+  end
 end
