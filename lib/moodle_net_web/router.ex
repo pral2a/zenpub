@@ -106,6 +106,7 @@ defmodule MoodleNetWeb.Router do
     pipe_through(:well_known)
 
     get "/webfinger", WebFingerController, :webfinger
+    get "/nodeinfo", NodeinfoController, :schemas
   end
 
   @doc """
@@ -139,5 +140,6 @@ defmodule MoodleNetWeb.Router do
 
   scope "/" do
     get "/", MoodleNetWeb.PageController, :index
+    get "/nodeinfo/:version", ActivityPubWeb.NodeinfoController, :nodeinfo
   end
 end
