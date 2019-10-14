@@ -2,27 +2,23 @@
 # Copyright © 2018-2019 Moodle Pty Ltd <https://moodle.com/moodlenet/>
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule MoodleNet.Actors.FeedItem do
-  use Ecto.Schema
+  use MoodleNet.Common.Schema
   alias Ecto.Changeset
-  alias MoodleNet.Actors.{Actor,FeedItem}
+  alias MoodleNet.Actors.Actor
+  alias MoodleNet.Meta.Pointer
 
-  @primary_key {:id,:binary_id, autogenerate: false}
-  @foreign_key_type :binary_id
-  @timestamps_opts [type: :utc_datetime_usec]
-  schema "mn_actor_feed_items" do
+  standalone_schema "mn_actor_feed" do
     belongs_to :actor, Actor
-    field :item_type, :string
-    timestamps()
+    belongs_to :pointer, Pointer
+    timestamps(updated_at: false)
   end
 
-  @item_types []
-  @cast_attrs []
-  @required_attrs []
+  @create_cast ~w()a
+  @create_required @create_cast
 
-  def changeset(%FeedItem{}=feed_item, attrs) do
-    feed_item
-    |> Changeset.cast(attrs, @cast_attrs)
-    |> Changeset.validate_required(@required_attrs)
+  def create_changeset(actor = %Actor{}, pointer = %Pointer{}) do
+    %__MODULE__{}
+    |> Changeset.put_assoc(:actor, actor)
+    |> Changeset.put_assoc(:pointer, pointer)
   end
-
 end
