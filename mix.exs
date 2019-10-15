@@ -72,6 +72,8 @@ defmodule MoodleNet.Mixfile do
       # Password hashing
       {:comeonin, "~> 4.1.1"}, 
       {:pbkdf2_elixir, "~> 0.12.3"},
+      # Job queueing
+      {:pleroma_job_queue, "~> 0.3.0"},
       # Outbound HTTP
       {:hackney, "~> 1.15"},
       {:tesla, "~> 1.2"},
