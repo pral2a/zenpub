@@ -1,3 +1,6 @@
+# MoodleNet: Connecting and empowering educators worldwide
+# Copyright © 2018-2019 Moodle Pty Ltd <https://moodle.com/moodlenet/>
+# SPDX-License-Identifier: AGPL-3.0-only
 defmodule MoodleNet.Comments.Comment do
   use MoodleNet.Common.Schema
   import MoodleNet.Common.Changeset, only: [meta_pointer_constraint: 1, change_public: 1]
@@ -51,4 +54,5 @@ defmodule MoodleNet.Comments.Comment do
     |> change_public()
     |> meta_pointer_constraint()
   end
+
 end
