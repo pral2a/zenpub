@@ -323,27 +323,48 @@ defmodule MoodleNet.Repo.Migrations.BigRefactor do
     create index(:mn_tag, :tagged_id, where: "deleted_at is null")
     create unique_index(:mn_tag, [:tagger_id, :tagged_id], where: "deleted_at is null")
 
-    # 
+    ### job queue
 
     create table(:mn_worker_task) do
-      add :deleted_at, :timestamptz
-      add :type, :varchar
-      add :data, :jsonb
+      add :module_name, :text, null: false   # callback module
+      add :arg, :jsonb, null: false          # callback argument
+      add :ttl, :int2, null: false           # how many more times can we try this?
+      add :attempts, :int2, null: false      # how many times have we tried this?
+      add :metadata, :jsonb, null: false     # arbitrary map
+      add :attempted_at, :utc_datetime_usec  # null unless currently running
+      add :failed_at, :utc_datetime_usec     # only when ttl = 0
+      add :completed_at, :utc_datetime_usec  # success
+      add :deleted_at, :utc_datetime_usec
       timestamps(type: :utc_datetime_usec)
     end
 
     create index(:mn_worker_task, :updated_at, where: "deleted_at is null")
 
-    create table(:mn_worker_performance) do
+    create table(:mn_worker_task_failure, primary_key: false) do
+      add :id,
+        references("mn_meta_pointer", on_delete: :delete_all),
+	primary_key: true
       add :task_id, references("mn_worker_task", on_delete: :delete_all)
-      timestamps(updated_at: false, type: :utc_datetime_usec)
+      timestamps(type: :utc_datetime_usec)
+    end
+
+    create table(:mn_instance_feed, primary_key: false) do
+      add :pointer_id,
+        references("mn_meta_pointer", on_delete: :delete_all),
+	primary_key: true
+      timestamps updated_at: false, type: :utc_datetime_usec)
     end
 
     create table(:mn_actor_feed, primary_key: false) do
-      add :actor_id, references("mn_actor", on_delete: :delete_all), primary_key: true
-      add :pointer_id, references("mn_meta_pointer", on_delete: :delete_all), primary_key: true
-      timestamps(updated_at: false, type: :utc_datetime_usec)
+      add :actor_id,
+	references("mn_actor", on_delete: :delete_all),
+	primary_key: true
+      add :pointer_id,
+	references("mn_meta_pointer", on_delete: :delete_all),
+	primary_key: true
+      timestamps updated_at: false, type: :utc_datetime_usec)
     end
+
 
     create index(:mn_actor_feed, :actor_id)
     create index(:mn_actor_feed, :pointer_id)
@@ -418,18 +439,7 @@ defmodule MoodleNet.Repo.Migrations.BigRefactor do
       |> Enum.join(", ")
     :ok = execute "insert into mn_meta_table (\"table\") values #{tables}"
 
-    # create a view showing the latest performance of tasks by workers
-    :ok = execute """
-    create view mn_worker_performance_latest as
-    (select
-       distinct on (task_id)
-       task_id, id
-     from mn_worker_performance
-     order by task_id, id
-    )
-    """
-
-    # create views showing the latest revision of revised tables
+     # create views showing the latest revision of revised tables
 
     for {table, column} <- @revised do
       :ok = execute """
@@ -475,7 +485,6 @@ defmodule MoodleNet.Repo.Migrations.BigRefactor do
     #   :ok = execute "drop view #{table}_latest_revision"
     # end
 
-    :ok = execute "drop view mn_worker_performance_latest"
     drop table(:mn_actor_feed)
     drop table(:mn_worker_performance)
     drop table(:mn_worker_task)
