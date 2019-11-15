@@ -31,11 +31,9 @@ defmodule MoodleNetWeb.GraphQL.MiscSchema do
   end
 
   def fetch_web_metadata(%{url: url}, info) do
-    with {:ok, _actor} <- current_actor(info) do
-      case MoodleNet.MetadataScraper.fetch(url) do
-        {:error, _} -> Errors.bad_gateway_error()
-        ret -> ret
-      end
+    case MoodleNet.MetadataScraper.fetch(url) do
+      {:error, _} -> {:error, MoodleNet.Common.NotFoundError.new(url)}
+      ret -> ret
     end
   end
 

@@ -59,7 +59,7 @@ defmodule MoodleNetWeb.GraphQL.ResourcesSchema do
     @desc "A name field"
     field :name, non_null(:string)
     @desc "Possibly biographical information"
-    field :summary, non_null(:string)
+    field :summary, :string
     @desc "An avatar url"
     field :icon, :string
     @desc "A link to an external resource"
@@ -148,8 +148,8 @@ defmodule MoodleNetWeb.GraphQL.ResourcesSchema do
 
   input_object :resource_input do
     field :name, non_null(:string)
-    field :summary, non_null(:string)
-    field :icon, non_null(:string)
+    field :summary, :string
+    field :icon, :string
     field :url, :string
     field :license, :string
     field :primary_language_id, :string
