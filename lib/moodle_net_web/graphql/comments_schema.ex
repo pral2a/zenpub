@@ -16,13 +16,13 @@ defmodule MoodleNetWeb.GraphQL.CommentsSchema do
   object :comments_queries do
 
     @desc "Get a thread"
-    field :thread, non_null(:thread) do
+    field :thread, :thread do
       arg :thread_id, non_null(:string)
       resolve &CommentsResolver.thread/2
     end
 
     @desc "Get a comment"
-    field :comment, non_null(:comment) do
+    field :comment, :comment do
       arg :comment_id, non_null(:string)
       resolve &CommentsResolver.comment/2
     end
@@ -32,14 +32,14 @@ defmodule MoodleNetWeb.GraphQL.CommentsSchema do
   object :comments_mutations do
 
     @desc "Create a new thread"
-    field :create_thread, non_null(:comment) do
+    field :create_thread, :comment do
       arg :context_id, non_null(:string)
       arg :comment, non_null(:comment_input)
       resolve &CommentsResolver.create_thread/2
     end
 
     @desc "Create a reply"
-    field :create_reply, non_null(:comment) do
+    field :create_reply, :comment do
       arg :thread_id, non_null(:string)
       arg :in_reply_to_id, non_null(:string)
       arg :comment, non_null(:comment_input)
@@ -47,7 +47,7 @@ defmodule MoodleNetWeb.GraphQL.CommentsSchema do
     end
 
     @desc "Edit a comment"
-    field :edit_comment, non_null(:comment) do
+    field :edit_comment, :comment do
       arg :comment_id, non_null(:string)
       arg :comment, non_null(:comment_input)
       resolve &CommentsResolver.update/2
@@ -125,7 +125,7 @@ defmodule MoodleNetWeb.GraphQL.CommentsSchema do
 
   object :threads_edges do
     field :page_info, :page_info
-    field :edges, list_of(:threads_edge)
+    field :edges, non_null(list_of(:threads_edge))
     field :total_count, non_null(:integer)
   end
 

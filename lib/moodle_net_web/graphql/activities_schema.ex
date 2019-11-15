@@ -15,7 +15,7 @@ defmodule MoodleNetWeb.GraphQL.ActivitiesSchema do
   alias MoodleNet.Users.User
 
   object :activities_queries do
-    field :activity, non_null(:activity) do
+    field :activity, :activity do
       arg :activity_id, non_null(:string)
       resolve &ActivitiesResolver.activity/2
     end

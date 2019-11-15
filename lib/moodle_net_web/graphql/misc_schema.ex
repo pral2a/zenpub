@@ -52,19 +52,4 @@ defmodule MoodleNetWeb.GraphQL.MiscSchema do
     end
   end
 
-  @doc """
-  FIXME: repeated code from moodlenetschema
-  """
-  defp current_user(%{context: %{current_user: nil}}), do: Errors.unauthorized_error()
-  defp current_user(%{context: %{current_user: user}}), do: {:ok, user}
-
-  defp current_actor(info) do
-    case current_user(info) do
-      {:ok, user} ->
-        {:ok, user.actor}
-
-      ret ->
-        ret
-    end
-  end
 end

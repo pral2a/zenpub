@@ -16,15 +16,15 @@ defmodule MoodleNetWeb.GraphQL.CommonSchema do
   }
 
   object :common_queries do
-    field :flag, non_null(:flag) do
+    field :flag, :flag do
       arg :flag_id, non_null(:string)
       resolve &CommonResolver.flag/2
     end
-    field :follow, non_null(:follow) do
+    field :follow, :follow do
       arg :follow_id, non_null(:string)
       resolve &CommonResolver.follow/2
     end
-    field :like, non_null(:like) do
+    field :like, :like do
       arg :like_id, non_null(:string)
       resolve &CommonResolver.like/2
     end
@@ -45,20 +45,20 @@ defmodule MoodleNetWeb.GraphQL.CommonSchema do
   object :common_mutations do
 
     @desc "Flag a user, community, collection, resource or comment, returning a flag id"
-    field :create_flag, non_null(:flag) do
+    field :create_flag, :flag do
       arg :context_id, non_null(:string)
       arg :message, non_null(:string)
       resolve &CommonResolver.create_flag/2
     end
 
     @desc "Follow a community, collection or thread returning a follow id"
-    field :create_follow, non_null(:follow) do
+    field :create_follow, :follow do
       arg :context_id, non_null(:string)
       resolve &CommonResolver.create_follow/2
     end
 
     @desc "Like a comment, collection, or resource returning a like id"
-    field :create_like, non_null(:like) do
+    field :create_like, :like do
       arg :context_id, non_null(:string)
       resolve &CommonResolver.create_like/2
     end
@@ -71,7 +71,7 @@ defmodule MoodleNetWeb.GraphQL.CommonSchema do
     # end
 
     @desc "Delete more or less anything"
-    field :delete, non_null(:delete_context) do
+    field :delete, :delete_context do
       arg :context_id, non_null(:string)
       resolve &CommonResolver.delete/2
     end
@@ -254,8 +254,8 @@ defmodule MoodleNetWeb.GraphQL.CommonSchema do
   union :delete_context do
     description "A thing that can be deleted"
     types [
-      :activity, :collection, :comment, :community, :country, :flag,
-      :follow, :language, :like, :resource, :thread, :user,
+      :activity, :collection, :comment, :community, :flag,
+      :follow, :like, :resource, :thread, :user,
     ]
     resolve_type fn
       %Activity{},   _ -> :activity

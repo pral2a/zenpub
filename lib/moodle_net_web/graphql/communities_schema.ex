@@ -29,7 +29,7 @@ defmodule MoodleNetWeb.GraphQL.CommunitiesSchema do
     end
 
     @desc "Get a community"
-    field :community, non_null(:community) do
+    field :community, :community do
       arg :community_id, non_null(:string)
       resolve &CommunitiesResolver.community/2
     end
@@ -39,13 +39,13 @@ defmodule MoodleNetWeb.GraphQL.CommunitiesSchema do
   object :communities_mutations do
 
     @desc "Create a community"
-    field :create_community, non_null(:community) do
+    field :create_community, :community do
       arg :community, non_null(:community_input)
       resolve &CommunitiesResolver.create_community/2
     end
 
     @desc "Update a community"
-    field :update_community, non_null(:community) do
+    field :update_community, :community do
       arg :community_id, non_null(:string)
       arg :community, non_null(:community_input)
       resolve &CommunitiesResolver.update_community/2
@@ -94,10 +94,10 @@ defmodule MoodleNetWeb.GraphQL.CommunitiesSchema do
       resolve &CommonResolver.my_follow/3
     end
  
-    @desc "The primary language the community speaks"
-    field :primary_language, :language do
-      resolve &LocalisationResolver.primary_language/3
-    end
+    # @desc "The primary language the community speaks"
+    # field :primary_language, :language do
+    #   resolve &LocalisationResolver.primary_language/3
+    # end
 
     @desc "The user who created the community"
     field :creator, non_null(:user) do
@@ -173,7 +173,7 @@ defmodule MoodleNetWeb.GraphQL.CommunitiesSchema do
     field :summary, :string
     field :icon, :string
     field :image, :string
-    field :primary_language_id, :string
+    # field :primary_language_id, :string
   end
 
 end

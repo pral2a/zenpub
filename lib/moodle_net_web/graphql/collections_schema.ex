@@ -27,7 +27,7 @@ defmodule MoodleNetWeb.GraphQL.CollectionsSchema do
     end
 
     @desc "Get a collection"
-    field :collection, non_null(:collection) do
+    field :collection, :collection do
       arg :collection_id, non_null(:string)
       resolve &CollectionsResolver.collection/2
     end
@@ -36,14 +36,14 @@ defmodule MoodleNetWeb.GraphQL.CollectionsSchema do
   object :collections_mutations do
 
     @desc "Create a collection"
-    field :create_collection, non_null(:collection) do
+    field :create_collection, :collection do
       arg :community_id, non_null(:string)
       arg :collection, non_null(:collection_input)
       resolve &CollectionsResolver.create_collection/2
     end
 
     @desc "Update a collection"
-    field :update_collection, non_null(:collection) do
+    field :update_collection, :collection do
       arg :collection_id, non_null(:string)
       arg :collection, non_null(:collection_input)
       resolve &CollectionsResolver.update_collection/2
@@ -98,10 +98,10 @@ defmodule MoodleNetWeb.GraphQL.CollectionsSchema do
       resolve &CommonResolver.my_follow/3
     end
 
-    @desc "The primary language the community speaks"
-    field :primary_language, :language do
-      resolve &LocalisationResolver.primary_language/3
-    end
+    # @desc "The primary language the community speaks"
+    # field :primary_language, :language do
+    #   resolve &LocalisationResolver.primary_language/3
+    # end
 
     @desc "The user who created the collection"
     field :creator, non_null(:user) do
@@ -196,7 +196,7 @@ defmodule MoodleNetWeb.GraphQL.CollectionsSchema do
     field :name, non_null(:string)
     field :summary, :string
     field :icon, :string
-    field :primary_language_id, :string
+    # field :primary_language_id, :string
   end
 
 end
