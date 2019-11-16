@@ -219,7 +219,6 @@ defmodule MoodleNet.ActivityPub.Publisher do
 
           _ ->
             flagged = Repo.preload(flagged, :actor)
-
             {:ok, account} =
               ActivityPub.Actor.get_or_fetch_by_username(flagged.actor.preferred_username)
 
