@@ -297,6 +297,8 @@ defmodule MoodleNet.Common do
       "verb" => verb,
       "user_id" => follow.follower_id,
       "context_id" => follow.id,
+      "target_id" => follow.followed_id,
+      "outbox" => MoodleNet.Users.Outbox
     }
     |> ActivityWorker.new()
     |> Oban.insert()
