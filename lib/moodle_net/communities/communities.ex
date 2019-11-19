@@ -94,8 +94,9 @@ defmodule MoodleNet.Communities do
   def create(%User{} = creator, %{} = attrs) do
     Repo.transact_with(fn ->
       with {:ok, actor} <- Actors.create(attrs),
-           {:ok, comm} <- insert_community(creator, actor, attrs) do
-	comm = %{comm | actor: actor, creator: creator}
+           {:ok, comm} <- insert_community(creator, actor, attrs),
+           {:ok, _} <- publish_community(comm, "create") do
+	      comm = Community.vivify_virtuals(%{comm | actor: actor, creator: creator})
         {:ok, comm}
       end
     end)
@@ -105,6 +106,14 @@ defmodule MoodleNet.Communities do
     Meta.point_to!(Community)
     |> Community.create_changeset(creator, actor, attrs)
     |> Repo.insert()
+  end
+
+  defp publish_community(%Community{} = community, verb) do
+    MoodleNet.FeedPublisher.publish(%{
+      "verb" => verb,
+      "context_id" => community.id,
+      "user_id" => community.creator_id,
+    })
   end
 
   @spec update(%Community{}, attrs :: map) :: {:ok, Community.t()} | {:error, Changeset.t()}
@@ -144,7 +153,12 @@ defmodule MoodleNet.Communities do
       select: count(i)
   end
 
-  def soft_delete(%Community{} = community), do: Common.soft_delete(community)
+  def soft_delete(%Community{} = community) do
+    with {:ok, community} <- Common.soft_delete(community),
+         {:ok, _} <- publish_community(community, "delete") do
+      {:ok, community}
+    end
+  end
 
   def preload(%Community{} = community, opts \\ []) do
     community
