@@ -5,6 +5,7 @@ defmodule MoodleNetWeb.GraphQL.Schema do
   @moduledoc "Root GraphQL Schema"
   use Absinthe.Schema
   alias MoodleNetWeb.GraphQL.{
+    ActorsResolver,
     ActivitiesSchema,
     AdminSchema,
     BlocksSchema,
@@ -67,20 +68,20 @@ defmodule MoodleNetWeb.GraphQL.Schema do
   # optional modules:
   import_types Taxonomy.GraphQL.LocalesSchema
   import_types Taxonomy.GraphQL.TagsSchema
-  import_types ValueFlows.GraphQL.Util
-  import_types ValueFlows.GraphQL.Measurement
-  import_types ValueFlows.GraphQL.Geolocation
-  import_types ValueFlows.GraphQL.Agent
-  import_types ValueFlows.GraphQL.Knowledge
-  import_types ValueFlows.GraphQL.Observation
-  import_types ValueFlows.GraphQL.Recipe
-  import_types ValueFlows.GraphQL.Plan
-  import_types ValueFlows.GraphQL.Planning
-  import_types ValueFlows.GraphQL.Proposal
-  import_types ValueFlows.GraphQL.Scenario
-  import_types ValueFlows.GraphQL.Agreement
-  import_types ValueFlows.GraphQL.Appreciation
-  import_types ValueFlows.GraphQL.Claim
+  import_types Geolocation.GraphQL
+  import_types ValueFlows.Util.GraphQL
+  import_types ValueFlows.Measurement.GraphQL
+  import_types ValueFlows.Agent.GraphQL
+  import_types ValueFlows.Knowledge.GraphQL
+  import_types ValueFlows.Observation.GraphQL
+  import_types ValueFlows.Recipe.GraphQL
+  import_types ValueFlows.Plan.GraphQL
+  import_types ValueFlows.Planning.GraphQL
+  import_types ValueFlows.Proposal.GraphQL
+  import_types ValueFlows.Scenario.GraphQL
+  import_types ValueFlows.Agreement.GraphQL
+  import_types ValueFlows.Appreciation.GraphQL
+  import_types ValueFlows.Claim.GraphQL
 
 
   query do
@@ -169,37 +170,17 @@ defmodule MoodleNetWeb.GraphQL.Schema do
   end
 
 
-  def hydrate(%{identifier: :all_units}, [%{identifier: :measurement_query} | _]) do
-    {:resolve, &ValueFlows.GraphQL.Measurement.all_units/3}
+  # hydate Geolocation schema with resolvers
+  def hydrate(%Absinthe.Blueprint{}, _) do
+    Geolocation.GraphQL.Hydration.hydrate(blueprint: %Absinthe.Blueprint{})
   end
 
-  def hydrate(%{identifier: :unit}, [%{identifier: :measurement_query} | _]) do
-    {:resolve, &ValueFlows.GraphQL.Measurement.unit/2}
+  # hydate VF schema with resolvers
+  def hydrate(%Absinthe.Blueprint{}, _) do
+    ValueFlows.GraphQL.Hydrations.hydrate(blueprint: %Absinthe.Blueprint{})
   end
 
-  def hydrate(%{identifier: :all_agents}, [%{identifier: :agent_query} | _]) do
-    Logger.info("hydrating")
-    {:resolve, &ValueFlows.GraphQL.Agent.all_agents/3}
-  end
-
-  def hydrate(%{identifier: :agent}, [%{identifier: :agent_query} | _]) do
-    Logger.info("hydrating")
-    {:resolve, &ValueFlows.GraphQL.Agent.agent/2}
-  end
-
-
-  def hydrate(%{identifier: :all_intents}, [%{identifier: :planning_query} | _]) do
-    Logger.info("hydrating")
-    {:resolve, &ValueFlows.GraphQL.Planning.all_intents/3}
-  end
-
-  def hydrate(%{identifier: :intent}, [%{identifier: :planning_query} | _]) do
-    Logger.info("hydrating")
-    {:resolve, &ValueFlows.GraphQL.Planning.intent/2}
-  end
-
-
-
+  # fallback
   def hydrate(_node, _ancestors) do
     []
   end
