@@ -73,11 +73,11 @@ defmodule ValueFlows.Measurement.Unit.Units do
   def create(%User{} = creator, attrs) when is_map(attrs) do
 
     Repo.transact_with(fn ->
-      with {:ok, item} <- insert_unit(creator, attrs) do
-          #  act_attrs = %{verb: "created", is_local: true},
-          #  {:ok, activity} <- Activities.create(creator, item, act_attrs), #FIXME
-          #  :ok <- publish(creator, item, activity, :created),
-          # do
+      with {:ok, item} <- insert_unit(creator, attrs),
+           act_attrs = %{verb: "created", is_local: true},
+           {:ok, activity} <- Activities.create(creator, item, act_attrs), #FIXME
+           :ok <- publish(creator, item, activity, :created)
+          do
             {:ok, item}
           end
     end)
@@ -87,11 +87,11 @@ defmodule ValueFlows.Measurement.Unit.Units do
   def create(%User{} = creator, %Community{} = community, attrs) when is_map(attrs) do
 
     Repo.transact_with(fn ->
-      with {:ok, item} <- insert_unit(creator, community, attrs) do
-          #  act_attrs = %{verb: "created", is_local: true},
-          #  {:ok, activity} <- Activities.create(creator, item, act_attrs), #FIXME
-          #  :ok <- publish(creator, community, item, activity, :created),
-          # do
+      with {:ok, item} <- insert_unit(creator, community, attrs),
+           act_attrs = %{verb: "created", is_local: true},
+           {:ok, activity} <- Activities.create(creator, item, act_attrs), #FIXME
+           :ok <- publish(creator, community, item, activity, :created)
+          do
             {:ok, item}
           end
     end)
@@ -107,10 +107,19 @@ defmodule ValueFlows.Measurement.Unit.Units do
     with {:ok, item} <- Repo.insert(cs), do: {:ok, item }
   end
 
+  defp publish(creator, unit, activity, :created) do
+    feeds = [
+      creator.outbox_id,
+      Feeds.instance_outbox_id(),
+    ]
+    with :ok <- FeedActivities.publish(activity, feeds) do
+      ap_publish(unit.id, creator.id)
+    end
+  end
   defp publish(creator, community, unit, activity, :created) do
     feeds = [
       community.outbox_id, creator.outbox_id,
-      unit.outbox_id, Feeds.instance_outbox_id(),
+      Feeds.instance_outbox_id(),
     ]
     with :ok <- FeedActivities.publish(activity, feeds) do
       ap_publish(unit.id, creator.id)
@@ -136,10 +145,14 @@ defmodule ValueFlows.Measurement.Unit.Units do
   def update(%Unit{} = unit, attrs) do
     Repo.transact_with(fn ->
       unit = Repo.preload(unit, :community)
-      with {:ok, unit} <- Repo.update(ValueFlows.Measurement.Unit.update_changeset(unit, attrs)),
-           :ok <- publish(unit, :updated) do
-        {:ok,  unit }
-      end
+      IO.inspect(unit)
+
+      with {:ok, unit} <- Repo.update(ValueFlows.Measurement.Unit.update_changeset(unit, attrs)) do
+          #  :ok <- publish(unit, :updated) do
+          #   IO.inspect("unit")
+          #   IO.inspect(unit)
+            {:ok,  unit }
+       end
     end)
   end
 
